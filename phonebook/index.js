@@ -1,12 +1,34 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const fs = require('fs')
-let contacts = require('./contacts.json')
 const app = express()
 
+app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
+
+let contacts = [
+    {
+        "id": "1",
+        "name": "Arto Hellas",
+        "number": "040-123456"
+    },
+    {
+        "id": "2",
+        "name": "Ada Lovelace",
+        "number": "39-44-5323523"
+    },
+    {
+        "id": "3",
+        "name": "Dan Abramov",
+        "number": "12-43-234345"
+    },
+    {
+        "id": "4",
+        "name": "Mary Poppendieck",
+        "number": "39-23-6423122"
+    }
+]
 
 morgan.token('body', function (req, res) {
     return JSON.stringify(req.body)
@@ -36,7 +58,6 @@ app.get('/api/persons/:id', (req, res) => {
 app.delete('/api/persons/:id', (req, res) => {
     const id = req.params.id
     contacts = contacts.filter(p => p.id != id)
-    fs.writeFileSync('./contacts.json', JSON.stringify(contacts, null, 4))
     res.status(204).end()
 })
 
@@ -57,7 +78,6 @@ app.post('/api/persons', (req, res) => {
         number: body.number
     }
     contacts = contacts.concat(person)
-    fs.writeFileSync('./contacts.json', JSON.stringify(contacts, null, 4))
     res.json(person)
 })
 
